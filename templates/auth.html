@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - AeroSegment</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Login</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <hr>
+        <h2>Sign Up</h2>
+        <form method="POST" action="{{ url_for('signup') }}">
+            <input type="text" name="username" placeholder="Choose a username" required>
+            <input type="password" name="password" placeholder="Create a password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <script src="/static/main.js"></script>
+</body>
+</html>

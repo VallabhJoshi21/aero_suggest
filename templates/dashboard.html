@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - AeroSegment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .dashboard-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px #ccc;
+        }
+        .plot-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .plot-buttons button {
+            margin: 5px;
+            padding: 10px 15px;
+            background: #108c9c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .plot-buttons button:hover {
+            background: #0b6c7d;
+        }
+        #plot-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+        #dataset-select {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+        }
+        #cooler-info {
+            text-align: center;
+            font-weight: bold;
+            color: #108c9c;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Welcome, {{ username }}!</h1>
+        <p>Select your area to explore customer analytics.</p>
+        <a href="{{ url_for('logout') }}">Logout</a>
+
+        <select id="dataset-select">
+            <option value="">Select your area</option>
+            {% for dataset in datasets %}
+                <option value="{{ dataset }}">{{ dataset.replace('-', ' ').title() }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="plot-buttons">
+            <button onclick="showPlot('age')">Customer Age</button>
+            <button onclick="showPlot('gender')">Gender Distribution</button>
+            <button onclick="showPlot('income')">Annual Income</button>
+            <button onclick="showPlot('spending')">Spending Score</button>
+            <button onclick="showPlot('correlation')">Correlation Matrix</button>
+            <button onclick="showPlot('clusters')">Customer Clusters</button>
+        </div>
+
+        <div id="plot-display">
+            <!-- Chart will show here -->
+        </div>
+
+        <div id="cooler-info">
+            Recommended cooler range for shopkeepers: ₹15,000 - ₹30,000
+        </div>
+    </div>
+
+   <script>
+    const priceRanges = {{ prices|tojson }};
+
+    function changeDataset() {
+        const dataset = document.getElementById('dataset-select').value;
+        const info = document.getElementById('cooler-info');
+
+        if (dataset && priceRanges[dataset]) {
+            info.innerHTML = `Recommended cooler range for shopkeepers in <b>${dataset.replace('-', ' ').toUpperCase()}</b>: <br> <span>${priceRanges[dataset]}</span>`;
+        } else {
+            info.innerHTML = `Recommended cooler range for shopkeepers: ₹15,000 - ₹30,000`;
+        }
+    }
+
+    function showPlot(plotName) {
+        const dataset = document.getElementById('dataset-select').value;
+        if (!dataset) {
+            alert('Please select your area first!');
+            return;
+        }
+        const plotDiv = document.getElementById('plot-display');
+        plotDiv.innerHTML = `<img src="/api/plots/${plotName}/${dataset}" width="600">`;
+    }
+
+    document.getElementById('dataset-select').addEventListener('change', changeDataset);
+</script>
+
+</body>
+</html>
